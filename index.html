@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>陌柳拂影的书房</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div id="language-switcher">
+            <button onclick="setLanguage('en')">English</button>
+            <button onclick="setLanguage('zh')">中文</button>
+        </div>
+        <h1 id="title">陌柳拂影的书房</h1>
+        <div id="member-status">
+            <span id="member-greeting">欢迎，游客</span>
+            <button onclick="openMemberArea()">会员登录</button>
+        </div>
+    </header>
+
+    <section id="member-area" style="display: none;">
+        <h2>会员专区</h2>
+        <button onclick="becomeMember()">成为会员</button>
+        <button onclick="logoutMember()">退出登录</button>
+    </section>
+
+    <section id="novel-upload">
+        <h2>上传小说</h2>
+        <form id="novel-upload-form">
+            <input type="text" id="novel-title" placeholder="小说标题" required>
+            <textarea id="novel-content" placeholder="输入你的小说内容..." required></textarea>
+            <select id="novel-category" required>
+                <option value="" disabled selected>选择分类</option>
+                <option value="fiction">小说</option>
+                <option value="non-fiction">非小说</option>
+                <option value="sci-fi">科幻</option>
+                <option value="fantasy">奇幻</option>
+            </select>
+            <button type="button" id="uploadButton" onclick="uploadNovel()">上传</button>
+        </form>
+    </section>
+
+    <section id="category-list">
+        <h2>目录</h2>
+        <ul id="categories">
+            <!-- 目录将动态生成 -->
+        </ul>
+    </section>
+
+    <section id="novel-list">
+        <h2>小说列表</h2>
+        <!-- 小说列表将动态生成 -->
+    </section>
+
+    <section id="novel-reader" style="display: none;">
+        <h2 id="novel-title"></h2>
+        <div id="novel-content-display"></div>
+        <button onclick="listenToNovel()">听书</button>
+        <button onclick="backToList()">返回列表</button>
+    </section>
+
+    <section id="daily-check-in">
+        <h2>每日打卡</h2>
+        <button onclick="dailyCheckIn()">打卡</button>
+        <p id="points-display">积分: 0</p>
+    </section>
+
+    <section id="free-reading">
+        <h2>免费阅读</h2>
+        <p id="days-left">剩余免费天数: 10</p>
+        <button onclick="redeemPointsForReading()">使用积分兑换章节</button>
+        <button onclick="shareForFreeChapter()">分享获取免费章节</button>
+    </section>
+
+    <script src="translations.js"></script>
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
