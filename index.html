@@ -19,33 +19,28 @@
         </div>
     </header>
 
-    <section id="member-area" style="display: none;">
-        <h2>会员专区</h2>
-        <button onclick="becomeMember()">成为会员</button>
-        <button onclick="logoutMember()">退出登录</button>
+    <!-- 管理员登录部分 -->
+    <section id="admin-login">
+        <h2>管理员登录</h2>
+        <input type="password" id="admin-password" placeholder="输入管理员密码">
+        <button onclick="adminLogin()">登录</button>
     </section>
 
-    <section id="novel-upload">
+    <!-- 上传小说的部分 -->
+    <section id="novel-upload" style="display: none;">
         <h2>上传小说</h2>
         <form id="novel-upload-form">
             <input type="text" id="novel-title" placeholder="小说标题" required>
             <textarea id="novel-content" placeholder="输入你的小说内容..." required></textarea>
             <select id="novel-category" required>
                 <option value="" disabled selected>选择分类</option>
-                <option value="fiction">小说</option>
-                <option value="non-fiction">非小说</option>
-                <option value="sci-fi">科幻</option>
-                <option value="fantasy">奇幻</option>
+                <option value="fantasy">奇幻类</option>
+                <option value="romance">言情类</option>
+                <option value="time-travel">穿越类</option>
+                <option value="children">儿童读物</option>
             </select>
             <button type="button" id="uploadButton" onclick="uploadNovel()">上传</button>
         </form>
-    </section>
-
-    <section id="category-list">
-        <h2>目录</h2>
-        <ul id="categories">
-            <!-- 目录将动态生成 -->
-        </ul>
     </section>
 
     <section id="novel-list">
@@ -73,8 +68,6 @@
         <button onclick="shareForFreeChapter()">分享获取免费章节</button>
     </section>
 
-    <script src="translations.js"></script>
-    <script src="data.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

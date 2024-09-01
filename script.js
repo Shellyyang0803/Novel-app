@@ -1,125 +1,53 @@
-// main.js
-
-// Translations
-const translations = {
-    en: {
-        title: "Moliu's Study Room",
-        upload: "Upload Novel",
-        read: "Read Novel",
-        listen: "Listen to Novel",
-        checkIn: "Daily Check-In",
-        freeReading: "Free Reading",
-        points: "Points",
-        redeem: "Redeem Points",
-        share: "Share for Free Chapter",
-    },
-    zh: {
-        title: "陌柳拂影的书房",
-        upload: "上传小说",
-        read: "阅读小说",
-        listen: "听书",
-        checkIn: "每日打卡",
-        freeReading: "免费阅读",
-        points: "积分",
-        redeem: "使用积分兑换",
-        share: "分享获取免费章节",
-    }
-};
+let isAdmin = false;  // 标识管理员身份
 
 function setLanguage(language) {
+    const translations = {
+        en: {
+            title: "Moliu's Study Room",
+            upload: "Upload Novel",
+            read: "Read Novel",
+            listen: "Listen to Novel",
+            checkIn: "Daily Check-In",
+            freeReading: "Free Reading",
+            points: "Points",
+            redeem: "Redeem Points",
+            share: "Share for Free Chapter",
+        },
+        zh: {
+            title: "陌柳拂影的书房",
+            upload: "上传小说",
+            read: "阅读小说",
+            listen: "听书",
+            checkIn: "每日打卡",
+            freeReading: "免费阅读",
+            points: "积分",
+            redeem: "使用积分兑换",
+            share: "分享获取免费章节",
+        }
+    };
+
     document.getElementById('title').textContent = translations[language].title;
     document.getElementById('uploadButton').textContent = translations[language].upload;
     // 继续将其他需要切换的文本进行替换...
 }
 
-// Data management
-let points = JSON.parse(localStorage.getItem('points')) || 0;
-let freeDaysLeft = JSON.parse(localStorage.getItem('freeDaysLeft')) || 10;
-let isMember = JSON.parse(localStorage.getItem('isMember')) || false;
-let memberExpiryDate = localStorage.getItem('memberExpiryDate');
+function adminLogin() {
+    const adminPassword = document.getElementById('admin-password').value;
+    const correctPassword = 'your_admin_password';  // 设定一个固定的管理员密码
 
-function updatePointsDisplay() {
-    document.getElementById('points-display').textContent = `积分: ${points}`;
-}
-
-function updateFreeDaysDisplay() {
-    document.getElementById('days-left').textContent = `剩余免费天数: ${freeDaysLeft}`;
-}
-
-function dailyCheckIn() {
-    const lastCheckIn = localStorage.getItem('lastCheckIn');
-    const today = new Date().toDateString();
-
-    if (lastCheckIn !== today) {
-        points += 10; // 每次打卡增加10积分
-        if (isMember) points += 10; // 会员获得额外积分
-        localStorage.setItem('points', JSON.stringify(points));
-        localStorage.setItem('lastCheckIn', today);
-        alert("打卡成功！获得积分。");
-        updatePointsDisplay();
+    if (adminPassword === correctPassword) {
+        isAdmin = true;
+        document.getElementById('novel-upload').style.display = 'block';
+        document.getElementById('admin-login').style.display = 'none';
+        alert("管理员登录成功！你现在可以上传小说。");
     } else {
-        alert("今天已打卡，请明天再来。");
+        alert("密码错误，无法登录。");
     }
 }
 
-function redeemPointsForReading() {
-    if (points >= 100) { // 假设100积分兑换一个章节
-        points -= 100;
-        localStorage.setItem('points', JSON.stringify(points));
-        alert("成功兑换一个章节！");
-        updatePointsDisplay();
-    } else {
-        alert("积分不足，无法兑换章节。");
-    }
-}
-
-function shareForFreeChapter() {
-    alert("分享成功！你获得了一个免费章节的阅读权。");
-    freeDaysLeft++;
-    localStorage.setItem('freeDaysLeft', JSON.stringify(freeDaysLeft));
-    updateFreeDaysDisplay();
-}
-
-function openMemberArea() {
-    const memberArea = document.getElementById('member-area');
-    memberArea.style.display = 'block';
-}
-
-function becomeMember() {
-    isMember = true;
-    const expiryDate = new Date();
-    expiryDate.setFullYear(expiryDate.getFullYear() + 1); // 会员有效期一年
-    memberExpiryDate = expiryDate.toDateString();
-    localStorage.setItem('isMember', JSON.stringify(isMember));
-    localStorage.setItem('memberExpiryDate', memberExpiryDate);
-    alert("恭喜你成为会员！");
-    updateMemberStatus();
-}
-
-function logoutMember() {
-    isMember = false;
-    localStorage.removeItem('isMember');
-    localStorage.removeItem('memberExpiryDate');
-    alert("你已退出会员状态。");
-    updateMemberStatus();
-}
-
-function updateMemberStatus() {
-    const greeting = document.getElementById('member-greeting');
-    const memberArea = document.getElementById('member-area');
-    if (isMember) {
-        greeting.textContent = `欢迎，尊贵的会员！会员有效期至：${memberExpiryDate}`;
-        memberArea.style.display = 'block';
-    } else {
-        greeting.textContent = "欢迎，游客";
-        memberArea.style.display = 'none';
-    }
-}
-
-// Script functionality
 function uploadNovel() {
-    if (!isMember) {
-        alert("此功能仅限会员使用。请先成为会员！");
+    if (!isAdmin) {
+        alert("只有管理员可以上传小说。");
         return;
     }
 
@@ -164,10 +92,10 @@ function displayCategories() {
 
 function translateCategoryName(category) {
     const categoryNames = {
-        'fiction': '小说',
-        'non-fiction': '非小说',
-        'sci-fi': '科幻',
-        'fantasy': '奇幻',
+        'fantasy': '奇幻类',
+        'romance': '言情类',
+        'time-travel': '穿越类',
+        'children': '儿童读物',
     };
     return categoryNames[category] || category;
 }
@@ -177,7 +105,7 @@ function displayNovelsByCategory(category) {
     const novels = JSON.parse(localStorage.getItem('novels')) || [];
     const filteredNovels = novels.filter(novel => novel.category === category);
 
-    novelList.innerHTML = filteredNovels.map((novel, index) => `
+      novelList.innerHTML = filteredNovels.map((novel, index) => `
         <div class="novel-item" onclick="readNovel(${index})">
             <h3>${novel.title}</h3>
         </div>
@@ -205,6 +133,52 @@ function listenToNovel() {
     const utterance = new SpeechSynthesisUtterance(content);
     utterance.lang = 'zh-CN'; // 设置语言为中文，如果需要英文，改为 'en-US'
     speechSynthesis.speak(utterance);
+}
+
+function dailyCheckIn() {
+    const lastCheckIn = localStorage.getItem('lastCheckIn');
+    const today = new Date().toDateString();
+
+    if (lastCheckIn !== today) {
+        let points = parseInt(localStorage.getItem('points')) || 0;
+        points += 10; // 每次打卡增加10积分
+        localStorage.setItem('points', points);
+        localStorage.setItem('lastCheckIn', today);
+        alert("打卡成功！获得10积分。");
+        updatePointsDisplay();
+    } else {
+        alert("今天已打卡，请明天再来。");
+    }
+}
+
+function updatePointsDisplay() {
+    const points = localStorage.getItem('points') || 0;
+    document.getElementById('points-display').textContent = `积分: ${points}`;
+}
+
+function redeemPointsForReading() {
+    let points = parseInt(localStorage.getItem('points')) || 0;
+    if (points >= 100) { // 假设100积分兑换一个章节
+        points -= 100;
+        localStorage.setItem('points', points);
+        alert("成功兑换一个章节！");
+        updatePointsDisplay();
+    } else {
+        alert("积分不足，无法兑换章节。");
+    }
+}
+
+function shareForFreeChapter() {
+    alert("分享成功！你获得了一个免费章节的阅读权。");
+    let freeDaysLeft = parseInt(localStorage.getItem('freeDaysLeft')) || 0;
+    freeDaysLeft += 1; // 每次分享增加1天免费阅读
+    localStorage.setItem('freeDaysLeft', freeDaysLeft);
+    updateFreeDaysDisplay();
+}
+
+function updateFreeDaysDisplay() {
+    const freeDaysLeft = localStorage.getItem('freeDaysLeft') || 10;
+    document.getElementById('days-left').textContent = `剩余免费天数: ${freeDaysLeft}`;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
